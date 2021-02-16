@@ -36,3 +36,9 @@ textarea {
 .sidebar h2 {
     margin-top: 5px;
 }
+
+.button_link {
+    background: none;
+    border: none;
+    padding: none;
+}
