@@ -2,10 +2,17 @@
 
 {% block title %}
 Edit page
+    <style>
+        textarea {
+            height: 70vh;
+            width: 80%;
+            display: block;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-    <p>Edit page {{ title }}</p>
+    <p>Edit page "{{ title }}"</p>
     <form action="{% url 'edit' %}" method="post">
         {% csrf_token %}
         {{ form }}

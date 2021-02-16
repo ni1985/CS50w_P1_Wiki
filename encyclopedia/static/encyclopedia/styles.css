@@ -3,7 +3,7 @@ body {
     background-color: white;
 }
 
-code {
+code {  
     white-space: pre;
 }
 
@@ -13,8 +13,9 @@ h1 {
 }
 
 textarea {
-    height: 90vh;
+    height: 70vh;
     width: 80%;
+    display: block;
 }
 
 .main {
@@ -35,6 +36,7 @@ textarea {
 
 .sidebar h2 {
     margin-top: 5px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .button_link {
@@ -42,3 +44,8 @@ textarea {
     border: none;
     padding: none;
 }
+
+label textarea {
+    display:block;
+}
+

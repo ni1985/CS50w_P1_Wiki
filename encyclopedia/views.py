@@ -12,10 +12,11 @@ from . import util
 
 class New_Entry(forms.Form):
     entry_title = forms.CharField(label="Title", max_length=25)
-    entry_text = forms.CharField(label="Markdown text", widget=forms.Textarea(attrs={"rows":5, "cols":20}))
+    #entry_text = forms.CharField(label="Markdown text", widget=forms.Textarea(attrs={"rows":1, "cols":20}))
+    entry_text = forms.CharField(label="Markdown text", widget=forms.Textarea())
 
 class Edit_Entry(forms.Form):
-    edit_text = forms.CharField(label="Markdown text", widget=forms.Textarea(attrs={"rows":5, "cols":20}))
+    edit_text = forms.CharField(label="Enter text", widget=forms.Textarea())
     title = forms.CharField(widget=forms.HiddenInput())
 
 def index(request):
@@ -36,7 +37,7 @@ def entry(request, entry_page):
 
         return render(request, "encyclopedia/entry.html", {
             "entry_text": text,
-            "entry_page": entry_page.lower()
+            "entry_page": entry_page
         })
     
     else:
@@ -92,7 +93,7 @@ def new_page(request):
 
             for i in range(0, len(ls_entries)):
                 if entry_title.lower() == ls_entries[i].lower():
-                    search_result.append(ls_entries[i])
+                    #search_result.append(ls_entries[i])
                     print(f"duplication: {ls_entries[i]}")    
                     
                     return render(request, "encyclopedia/error.html", {
@@ -127,35 +128,51 @@ def rnd(request):
 def edit(request):
 
     if request.method == "POST":
+        print("Post")
         form = Edit_Entry(request.POST)
         print(form)
 
         if form.is_valid():
             edit_text = form.cleaned_data["edit_text"]
             edit_title = form.cleaned_data["title"]
-            ls_entries = util.list_entries()
+            print(f"edit title {edit_title}")
+            #ls_entries = util.list_entries()
+            
+            print(f"text before {util.get_entry(edit_title)}")
 
-            for i in range(0, len(ls_entries)):
-                print(ls_entries[i])
-                if edit_title.lower() in ls_entries[i].lower():
-                    print('yes')
-                    util.save_entry(ls_entries[i], edit_text)
+            util.save_entry(edit_title, edit_text)
+
+            print(f"text after {util.get_entry(edit_title)}")
+
+            edit_text = markdown2.markdown(edit_text)
+
+            return render(request, "encyclopedia/entry.html", {
+                "entry_text": edit_text,
+                "entry_page": edit_title
+            })
+
+            #for i in range(0, len(ls_entries)):
+            #    print(ls_entries[i])
+            #    if edit_title.lower() in ls_entries[i].lower():
+            #        print('yes')
+            #        util.save_entry(ls_entries[i], edit_text)
                     
 
-                    print(ls_entries[i])
-                    print(edit_text)
-                    
-                    return render(request, "encyclopedia/entry.html", {
-                        "entry_text": ls_entries[i],
-                        "entry_page": edit_text
-                    })
+            #        print(ls_entries[i])
+            #        print(edit_text)
+
+            #        return render(request, "encyclopedia/entry.html", {
+            #            "entry_text": ls_entries[i],
+            #            "entry_page": edit_text
+            #        })
                 
-                else:
-                    return render(request, "encyclopedia/error.html", {
-                            "message": f"Entry \"{edit_title}\" not found"
-                        })
+            #    else:
+            #        return render(request, "encyclopedia/error.html", {
+            #                "message": f"Entry \"{edit_title}\" not found"
+            #            })
 
     else:
+        print("Get")
         edit_title = request.GET#('edit')
         print(f"title of the entry is {edit_title['edit']}")
 
@@ -163,7 +180,7 @@ def edit(request):
         entry = util.get_entry(edit_title['edit'])
         print(f"initial entry text is {entry}")
         
-        form = Edit_Entry(initial={'edit_text': entry, 'title': edit_title['edit']})
+        form = Edit_Entry(initial={'edit_text': entry, 'title': edit_title['edit']}, auto_id=False)
 
         return render(request, "encyclopedia/edit_page.html", {
             "form": form,
